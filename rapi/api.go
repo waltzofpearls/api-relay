@@ -1,5 +1,9 @@
 package rapi
 
+import (
+	"github.com/julienschmidt/httprouter"
+)
+
 type TransformCb func() (err error)
 
 type Api struct {
