@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
+	"io"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -10,7 +11,20 @@ func main() {
 	router := httprouter.New()
 
 	router.GET("/", func (w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		fmt.Fprint(w, "Protected!\n")
+		r.URL.Host = "localhost:8094"
+		r.URL.Scheme = "http"
+
+		tr := http.DefaultTransport
+
+		resp, respErr := tr.RoundTrip(r)
+		if respErr == nil {
+			defer resp.Body.Close()
+		}
+
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+
+		// fmt.Fprint(w, "Protected!!!!\n" + r.URL.Query().Get("querystring1"))
 	})
 
 	http.ListenAndServe(":8080", router)
