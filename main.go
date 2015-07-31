@@ -2,15 +2,15 @@ package main
 
 import (
 	// "fmt"
-	"io"
 	"github.com/julienschmidt/httprouter"
+	"io"
 	"net/http"
 )
 
 func main() {
 	router := httprouter.New()
 
-	router.GET("/", func (w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	router.GET("/", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		r.URL.Host = "localhost:8094"
 		r.URL.Scheme = "http"
 

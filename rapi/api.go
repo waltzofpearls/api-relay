@@ -17,15 +17,19 @@ func New(endpoint string) *Api {
 }
 
 func (a *Api) NewEndpoint(method, endpoint string) *Api {
+	return
 }
 
 func (a *Api) InternalPath(endpoint string) *Api {
+	return
 }
 
 func (a *Api) TransformRequest(internal, external interface{}) *Api {
+	return
 }
 
 func (a *Api) TransformResponse(internal, external interface{}) *Api {
+	return
 }
 
 func (a *Api) TransformRequestCb(callback TransformCb) *Api {
