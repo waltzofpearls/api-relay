@@ -5,8 +5,12 @@ type Endpoint struct {
 	endpoint string
 }
 
-func NewEndpoint(method, endpoint string) *Endpoint {
-	return &Endpoint{}
+func NewEndpoint(proxy *Proxy, method, endpoint string) *Endpoint {
+	return &Endpoint{
+		proxy:    proxy,
+		method:   method,
+		endpoint: endpoint,
+	}
 }
 
 func (ep *Endpoint) InternalPath(endpoint string) *Endpoint {
