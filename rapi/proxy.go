@@ -3,16 +3,16 @@ package rapi
 import (
 	"net/http"
 
-	"github.com/dimfeld/httptreemux"
+	"github.com/gorilla/mux"
 )
 
 type Proxy struct {
-	router httptreemux.TreeMux
+	router mux.Router
 }
 
 func NewProxy() *Proxy {
 	return &Proxy{
-		router: httptreemux.New(),
+		router: mux.NewRouter(),
 	}
 }
 
