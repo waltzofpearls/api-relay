@@ -10,12 +10,12 @@ type Api struct {
 func New(prefix string) *Api {
 	return &Api{
 		prefix: "/api" + prefix,
-		proxy:  NewProxy(),
+		proxy:  *NewProxy(),
 	}
 }
 
 func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
-	return NewEndpoint(a.proxy, method, a.prefix+endpoint)
+	return NewEndpoint(&a.proxy, method, a.prefix+endpoint)
 }
 
 func (a *Api) Run() {

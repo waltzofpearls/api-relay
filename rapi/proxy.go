@@ -12,10 +12,10 @@ type Proxy struct {
 
 func NewProxy() *Proxy {
 	return &Proxy{
-		router: mux.NewRouter(),
+		router: *mux.NewRouter(),
 	}
 }
 
 func (p *Proxy) Serve() {
-	http.ListenAndServe(":8080", p.router)
+	http.ListenAndServe(":8080", &p.router)
 }
