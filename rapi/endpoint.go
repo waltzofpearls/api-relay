@@ -1,17 +1,29 @@
 package rapi
 
+import "net/http"
+
 type Endpoint struct {
 	proxy    *Proxy
 	method   string
 	endpoint string
 }
 
-func NewEndpoint(proxy *Proxy, method, endpoint string) *Endpoint {
-	return &Endpoint{
+func NewEndpoint(proxy *Proxy, prefix, method, endpoint string) *Endpoint {
+	ep := &Endpoint{
 		proxy:    proxy,
 		method:   method,
 		endpoint: endpoint,
 	}
+
+	proxy.router.
+		HandleFunc(prefix+endpoint, ep.Handler).
+		Methods(method)
+
+	return ep
+}
+
+func (ep *Endpoint) Handler(w http.ResponseWriter, r *http.Request) {
+	ep.proxy.Request(ep, w, r)
 }
 
 func (ep *Endpoint) InternalPath(endpoint string) *Endpoint {
