@@ -8,7 +8,11 @@ import (
 )
 
 type Proxy struct {
-	router *mux.Router
+	router             *mux.Router
+	listenProtocol     string
+	listenAddr         string
+	downstreamProtocol string
+	downstreamAddr     string
 }
 
 func NewProxy() *Proxy {
@@ -17,14 +21,30 @@ func NewProxy() *Proxy {
 	}
 }
 
+func (p *Proxy) setListenProtocol(protocol string) {
+	p.listenProtocol = protocol
+}
+
+func (p *Proxy) setListenAddr(addr string) {
+	p.listenAddr = addr
+}
+
+func (p *Proxy) setDownstreamProtocol(protocol string) {
+	p.downstreamProtocol = protocol
+}
+
+func (p *Proxy) setDownstreamAddr(addr string) {
+	p.downstreamAddr = addr
+}
+
 func (p *Proxy) Serve() {
 	http.ListenAndServe(":8080", p.router)
 }
 
 func (p *Proxy) Request(ep *Endpoint, w http.ResponseWriter, r *http.Request) {
-	r.URL.Host = "localhost:8094"
+	r.URL.Host = p.downstreamAddr
 	r.URL.Scheme = "http"
-	r.URL.Path = "/api" + r.URL.Path
+	r.URL.Path = "/api" + ep.downstream
 
 	tr := http.DefaultTransport
 

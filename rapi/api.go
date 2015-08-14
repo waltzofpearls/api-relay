@@ -14,6 +14,26 @@ func New(prefix string) *Api {
 	}
 }
 
+func (a *Api) setListenProtocol(protocol string) *Api {
+	a.proxy.setListenProtocol(protocol)
+	return a
+}
+
+func (a *Api) setListenAddr(addr string) *Api {
+	a.proxy.setListenAddr(addr)
+	return a
+}
+
+func (a *Api) setDownstreamProtocol(protocol string) *Api {
+	a.proxy.setDownstreamProtocol(protocol)
+	return a
+}
+
+func (a *Api) setDownstreamAddr(addr string) *Api {
+	a.proxy.setDownstreamAddr(addr)
+	return a
+}
+
 func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
 	return NewEndpoint(&a.proxy, a.prefix, method, endpoint)
 }

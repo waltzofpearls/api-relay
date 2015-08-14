@@ -3,16 +3,18 @@ package rapi
 import "net/http"
 
 type Endpoint struct {
-	proxy    *Proxy
-	method   string
-	endpoint string
+	proxy      *Proxy
+	method     string
+	endpoint   string
+	downstream string
 }
 
 func NewEndpoint(proxy *Proxy, prefix, method, endpoint string) *Endpoint {
 	ep := &Endpoint{
-		proxy:    proxy,
-		method:   method,
-		endpoint: endpoint,
+		proxy:      proxy,
+		method:     method,
+		endpoint:   endpoint,
+		downstream: endpoint,
 	}
 
 	proxy.router.
@@ -27,6 +29,7 @@ func (ep *Endpoint) Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ep *Endpoint) InternalPath(endpoint string) *Endpoint {
+	ep.downstream = endpoint
 	return ep
 }
 
