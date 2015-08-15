@@ -1,11 +1,22 @@
 package main
 
-import "github.com/waltzofpearls/relay-api/rapi"
+import (
+	"flag"
+	"fmt"
+
+	"github.com/waltzofpearls/relay-api/rapi"
+)
 
 func main() {
-	api := rapi.New("/v1").
-		setListenAddr("http://localhost:8080").
-		setDownstreamAddr("http://localhost:8094")
+	var configPath string
+
+	flag.StringVar(&configPath, "c", "config.json", "Path to config file")
+	flag.Parse()
+	flag.Visit(func(v *flag.Flag) {
+		fmt.Printf("%s - %s: %s\n", v.Usage, v.Name, v.Value)
+	})
+
+	api := rapi.New("/v1", configPath)
 	api.NewEndpoint("GET", "/users")
 	api.Run()
 }

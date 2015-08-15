@@ -4,40 +4,22 @@ type TransformCb func() (err error)
 
 type Api struct {
 	prefix string
-	proxy  Proxy
+	proxy  *Proxy
+	config *Config
 }
 
-func New(prefix string) *Api {
-	return &Api{
-		prefix: prefix,
-		proxy:  *NewProxy(),
-	}
-}
-
-func (a *Api) setListenProtocol(protocol string) *Api {
-	a.proxy.setListenProtocol(protocol)
+func New(prefix, configPath string) *Api {
+	a := new(Api)
+	a.config = NewConfig(configPath)
+	a.prefix = prefix
+	a.proxy = NewProxy(a.config)
 	return a
-}
-
-func (a *Api) setListenAddr(addr string) *Api {
-	a.proxy.setListenAddr(addr)
-	return a
-}
-
-func (a *Api) setDownstreamProtocol(protocol string) *Api {
-	a.proxy.setDownstreamProtocol(protocol)
-	return a
-}
-
-func (a *Api) setDownstreamAddr(addr string) *Api {
-	a.proxy.setDownstreamAddr(addr)
-	return a
-}
-
-func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
-	return NewEndpoint(&a.proxy, a.prefix, method, endpoint)
 }
 
 func (a *Api) Run() {
 	a.proxy.Serve()
+}
+
+func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
+	return NewEndpoint(a, a.prefix, method, endpoint)
 }
