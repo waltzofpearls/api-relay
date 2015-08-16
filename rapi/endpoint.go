@@ -8,7 +8,6 @@ import (
 
 type Endpoint struct {
 	config       *Config
-	extPath      string
 	intPath      string
 	method       string
 	reqExtStruct interface{}
@@ -21,7 +20,6 @@ type Endpoint struct {
 func NewEndpoint(a *Api, method, path string) *Endpoint {
 	ep := &Endpoint{
 		config:       a.config,
-		extPath:      path,
 		intPath:      path,
 		method:       method,
 		reqExtStruct: nil,
