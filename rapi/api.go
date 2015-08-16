@@ -6,8 +6,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type TransformCb func() (err error)
-
 type Api struct {
 	config      *Config
 	router      *mux.Router

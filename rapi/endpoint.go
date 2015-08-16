@@ -7,9 +7,11 @@ import (
 	"net/http"
 )
 
+type TransformCb func() (err error)
+
 type Endpoint struct {
 	config       *Config
-	intPath      string
+	path         string
 	reqExtStruct interface{}
 	reqIntStruct interface{}
 	resExtStruct interface{}
@@ -19,13 +21,9 @@ type Endpoint struct {
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
 	ep := &Endpoint{
-		config:       a.config,
-		intPath:      path,
-		reqExtStruct: nil,
-		reqIntStruct: nil,
-		resExtStruct: nil,
-		resIntStruct: nil,
-		transformer:  a.transformer,
+		config:      a.config,
+		path:        path,
+		transformer: a.transformer,
 	}
 
 	a.Route(method, ep.config.Listener.Prefix+path, ep)
@@ -38,18 +36,17 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	r.URL.Host = ep.config.Backend.Address
 	r.URL.Scheme = "http"
-	r.URL.Path = "/api" + ep.intPath
+	r.URL.Path = ep.config.Backend.Prefix + ep.path
 
 	if ep.reqExtStruct != nil {
 		ep.transformer.TransformRequest(r, ep.reqExtStruct)
 	}
 
 	res, resErr := tr.RoundTrip(r)
-	if resErr == nil {
-		defer res.Body.Close()
-	}
 	if resErr != nil {
 		panic(fmt.Sprintf("Response error: %s", resErr))
+	} else {
+		defer res.Body.Close()
 	}
 
 	if ep.resExtStruct != nil {
@@ -65,7 +62,7 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ep *Endpoint) InternalPath(path string) *Endpoint {
-	ep.intPath = path
+	ep.path = path
 	return ep
 }
 
