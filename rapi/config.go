@@ -2,7 +2,7 @@ package rapi
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"os"
 )
 
@@ -37,6 +37,6 @@ func (c *Config) Parse() {
 
 	err := decoder.Decode(c.Item)
 	if err != nil {
-		log.Fatalf("Error parsing JSON config file: %s", err)
+		panic(fmt.Sprintf("Error parsing JSON config file: %s", err))
 	}
 }
