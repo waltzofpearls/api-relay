@@ -1,6 +1,10 @@
 {
-  "listenAddr": "localhost:9001",
-  "downstream": "localhost:8094",
-  "extPathPrefix": "/v1",
-  "intPathPrefix": "/api"
+  "listener": {
+    "address":"localhost:9001",
+    "prefix":"/v1"
+  },
+  "backend": {
+    "address":"localhost:8094",
+    "prefix":"/api"
+  }
 }

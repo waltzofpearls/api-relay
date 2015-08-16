@@ -17,10 +17,12 @@ func TestEmptyConfig(t *testing.T) {
 func TestValidConfigFile(t *testing.T) {
 	fixtures := []string{
 		`{}`,
-		`{"ListenAddr":""}`,
-		`{"downstream":""}`,
-		`{"extPathPrefix":""}`,
-		`{"intPathPrefix":""}`,
+		`{"listener":{}}`,
+		`{"backend":{}}`,
+		`{"listener":{"address":"localhost:1234"}}`,
+		`{"backend":{"address":"localhost:4321"}}`,
+		`{"backend":{"prefix":"/api"}}`,
+		`{"listener":{"prefix":"/v1"}}`,
 	}
 
 	for testn, fix := range fixtures {

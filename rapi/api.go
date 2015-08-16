@@ -9,12 +9,12 @@ import (
 type TransformCb func() (err error)
 
 type Api struct {
-	config      *ConfigItem
+	config      *Config
 	router      *mux.Router
 	transformer *Transformer
 }
 
-func New(config *ConfigItem) *Api {
+func New(config *Config) *Api {
 	a := new(Api)
 	a.config = config
 	a.router = mux.NewRouter()
@@ -23,7 +23,7 @@ func New(config *ConfigItem) *Api {
 }
 
 func (a *Api) Run() {
-	http.ListenAndServe(a.config.ListenAddr, a.router)
+	http.ListenAndServe(a.config.Listener.Address, a.router)
 }
 
 func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
