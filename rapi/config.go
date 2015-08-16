@@ -16,10 +16,15 @@ type Config struct {
 	item *ConfigItem
 }
 
-func NewConfig(path string) *Config {
-	c := Config{path: path}
+func NewConfig() *Config {
+	return &Config{}
+}
+
+func NewConfigFile(path string) *Config {
+	c := NewConfig()
+	c.path = path
 	c.Parse()
-	return &c
+	return c
 }
 
 func (c *Config) Parse() {
