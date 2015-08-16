@@ -16,7 +16,8 @@ func main() {
 		fmt.Printf("%s - %s: %s\n", v.Usage, v.Name, v.Value)
 	})
 
-	api := rapi.New("/v1", configPath)
+	config := rapi.NewConfigFile(configPath)
+	api := rapi.New("/v1", config)
 	api.NewEndpoint("GET", "/users")
 	api.Run()
 }

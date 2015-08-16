@@ -8,9 +8,9 @@ type Api struct {
 	config *Config
 }
 
-func New(prefix, configPath string) *Api {
+func New(prefix string, config *Config) *Api {
 	a := new(Api)
-	a.config = NewConfig(configPath)
+	a.config = config
 	a.prefix = prefix
 	a.proxy = NewProxy(a.config)
 	return a
