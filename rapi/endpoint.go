@@ -19,13 +19,9 @@ type Endpoint struct {
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
 	ep := &Endpoint{
-		config:       a.config,
-		intPath:      path,
-		reqExtStruct: nil,
-		reqIntStruct: nil,
-		resExtStruct: nil,
-		resIntStruct: nil,
-		transformer:  a.transformer,
+		config:      a.config,
+		intPath:     path,
+		transformer: a.transformer,
 	}
 
 	a.Route(method, ep.config.Listener.Prefix+path, ep)
