@@ -1,6 +1,7 @@
 package rapi
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -46,6 +47,9 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	res, resErr := tr.RoundTrip(r)
 	if resErr == nil {
 		defer res.Body.Close()
+	}
+	if resErr != nil {
+		panic(fmt.Sprintf("Response error: %s", resErr))
 	}
 
 	if ep.resExtStruct != nil {
