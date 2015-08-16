@@ -10,7 +10,7 @@ type Endpoint struct {
 }
 
 func NewEndpoint(a *Api, prefix, method, path string) *Endpoint {
-	ep := Endpoint{
+	ep := &Endpoint{
 		api:          a,
 		externalPath: path,
 		internalPath: path,
@@ -18,13 +18,13 @@ func NewEndpoint(a *Api, prefix, method, path string) *Endpoint {
 	}
 
 	a.proxy.router.
-		HandleFunc(prefix+path, ep.Handler).
+		Handle(prefix+path, ep).
 		Methods(method)
 
-	return &ep
+	return ep
 }
 
-func (ep *Endpoint) Handler(w http.ResponseWriter, r *http.Request) {
+func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ep.api.proxy.Request(ep, w, r)
 }
 
