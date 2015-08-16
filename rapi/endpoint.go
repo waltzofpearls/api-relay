@@ -7,7 +7,6 @@ import (
 )
 
 type Endpoint struct {
-	api          *Api
 	config       *Config
 	extPath      string
 	intPath      string
@@ -21,7 +20,6 @@ type Endpoint struct {
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
 	ep := &Endpoint{
-		api:          a,
 		config:       a.config,
 		extPath:      path,
 		intPath:      path,
