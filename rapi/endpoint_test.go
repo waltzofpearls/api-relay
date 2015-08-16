@@ -1,6 +1,7 @@
 package rapi_test
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -11,9 +12,16 @@ import (
 	"github.com/waltzofpearls/relay-api/rapi"
 )
 
-func TestEndpoint(t *testing.T) {
+func TestEndpointUnchanged(t *testing.T) {
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	var requestContent string
+
+	expectedResult := `test`
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		req, _ := ioutil.ReadAll(r.Body)
+		requestContent = string(req)
+		w.Write([]byte(expectedResult))
+	}))
 	defer ts.Close()
 
 	conf := rapi.NewConfig()
@@ -22,10 +30,11 @@ func TestEndpoint(t *testing.T) {
 	api := rapi.New(conf)
 	require.NotNil(t, api)
 
-	ep := rapi.NewEndpoint(api, "GET", "/foo")
+	ep := rapi.NewEndpoint(api, "POST", "/foo")
 	assert.NotNil(t, ep)
 
-	req, err := http.NewRequest("GET", "/foo", nil)
+	fixture := `{"One":"this is the one", "Two":"this is the second"}`
+	req, err := http.NewRequest("POST", "/foo", strings.NewReader(fixture))
 	require.Nil(t, err)
 	require.NotNil(t, req)
 
@@ -33,4 +42,7 @@ func TestEndpoint(t *testing.T) {
 	require.NotNil(t, resp)
 
 	ep.ServeHTTP(resp, req)
+
+	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Equal(t, fixture, requestContent, "request body is unchanged")
 }
