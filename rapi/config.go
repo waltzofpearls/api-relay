@@ -8,13 +8,13 @@ import (
 
 type Config struct {
 	Listener struct {
-		Address string `json: "address"`
-		Prefix  string `json: "prefix"`
-	} `json: "listener"`
+		Address string `json:"address"`
+		Prefix  string `json:"prefix"`
+	} `json:"listener"`
 	Backend struct {
-		Address string `json: "address"`
-		Prefix  string `json: "prefix"`
-	} `json: "backend"`
+		Address string `json:"address"`
+		Prefix  string `json:"prefix"`
+	} `json:"backend"`
 }
 
 func NewConfig() *Config {
