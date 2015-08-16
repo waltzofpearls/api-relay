@@ -8,7 +8,7 @@ import (
 
 type Endpoint struct {
 	api          *Api
-	config       *ConfigItem
+	config       *Config
 	extPath      string
 	intPath      string
 	method       string
@@ -34,7 +34,7 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 	}
 
 	a.router.
-		Handle(ep.config.ExtPathPrefix+path, ep).
+		Handle(ep.config.Listener.Prefix+path, ep).
 		Methods(method)
 
 	return ep
@@ -43,7 +43,7 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tr := http.DefaultTransport
 
-	r.URL.Host = ep.config.Downstream
+	r.URL.Host = ep.config.Backend.Address
 	r.URL.Scheme = "http"
 	r.URL.Path = "/api" + ep.intPath
 

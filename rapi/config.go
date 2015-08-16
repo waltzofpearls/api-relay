@@ -6,16 +6,15 @@ import (
 	"os"
 )
 
-type ConfigItem struct {
-	ListenAddr    string `json: "listenAddr"`
-	Downstream    string `json: "downstream"`
-	ExtPathPrefix string `json: "extPathPrefix"`
-	IntPathPrefix string `json: "intPathPrefix"`
-}
-
 type Config struct {
-	path string
-	Item *ConfigItem
+	Listener struct {
+		Address string `json: "address"`
+		Prefix  string `json: "prefix"`
+	} `json: "listener"`
+	Backend struct {
+		Address string `json: "address"`
+		Prefix  string `json: "prefix"`
+	} `json: "backend"`
 }
 
 func NewConfig() *Config {
@@ -24,19 +23,13 @@ func NewConfig() *Config {
 
 func NewConfigFile(path string) *Config {
 	c := NewConfig()
-	c.path = path
-	c.Parse()
-	return c
-}
-
-func (c *Config) Parse() {
-	file, _ := os.Open(c.path)
+	file, _ := os.Open(path)
 	decoder := json.NewDecoder(file)
 
-	c.Item = new(ConfigItem)
-
-	err := decoder.Decode(c.Item)
+	err := decoder.Decode(c)
 	if err != nil {
 		panic(fmt.Sprintf("Error parsing JSON config file: %s", err))
 	}
+
+	return c
 }

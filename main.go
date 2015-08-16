@@ -17,7 +17,7 @@ func main() {
 	})
 
 	config := rapi.NewConfigFile(configPath)
-	api := rapi.New(config.Item)
+	api := rapi.New(config)
 	api.NewEndpoint("GET", "/users")
 	api.Run()
 }
