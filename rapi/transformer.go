@@ -8,6 +8,11 @@ import (
 	"net/http"
 )
 
+type Transformable interface {
+	TransformRequest(*http.Request, interface{}) bool
+	TransformResponse(*http.Response, interface{}) bool
+}
+
 type Transformer struct {
 }
 

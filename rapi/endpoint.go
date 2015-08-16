@@ -1,31 +1,26 @@
 package rapi
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 )
 
 type Endpoint struct {
-	api          *Api
 	config       *Config
-	extPath      string
 	intPath      string
-	method       string
 	reqExtStruct interface{}
 	reqIntStruct interface{}
 	resExtStruct interface{}
 	resIntStruct interface{}
-	transformer  *Transformer
+	transformer  Transformable
 }
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
 	ep := &Endpoint{
-		api:          a,
 		config:       a.config,
-		extPath:      path,
 		intPath:      path,
-		method:       method,
 		reqExtStruct: nil,
 		reqIntStruct: nil,
 		resExtStruct: nil,
@@ -33,9 +28,7 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 		transformer:  a.transformer,
 	}
 
-	a.router.
-		Handle(ep.config.Listener.Prefix+path, ep).
-		Methods(method)
+	a.Route(method, ep.config.Listener.Prefix+path, ep)
 
 	return ep
 }
@@ -54,6 +47,9 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	res, resErr := tr.RoundTrip(r)
 	if resErr == nil {
 		defer res.Body.Close()
+	}
+	if resErr != nil {
+		panic(fmt.Sprintf("Response error: %s", resErr))
 	}
 
 	if ep.resExtStruct != nil {
