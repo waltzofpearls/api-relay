@@ -9,14 +9,16 @@ import (
 type TransformCb func() (err error)
 
 type Api struct {
-	config *ConfigItem
-	router *mux.Router
+	config      *ConfigItem
+	router      *mux.Router
+	transformer *Transformer
 }
 
 func New(config *ConfigItem) *Api {
 	a := new(Api)
 	a.config = config
 	a.router = mux.NewRouter()
+	a.transformer = NewTransformer()
 	return a
 }
 

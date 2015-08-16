@@ -1,7 +1,9 @@
 package rapi
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -13,26 +15,54 @@ func NewTransformer() *Transformer {
 	return &Transformer{}
 }
 
-func (t *Transformer) TransformRequest(ep *Endpoint, req *http.Request) {
+func (t *Transformer) TransformRequest(req *http.Request, v interface{}) bool {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		log.Printf("Error reading request body: %s", err)
+		return false
+	}
 
+	out := t.Transform(body, v)
+	if out == nil {
+		return false
+	}
+
+	req.Body = ioutil.NopCloser(bytes.NewBuffer(out))
+	req.Header.Del("Content-Length")
+
+	return true
 }
 
-func (t *Transformer) TransformResponse(ep *Endpoint, res *http.Response) {
+func (t *Transformer) TransformResponse(res *http.Response, v interface{}) bool {
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %s", err)
+		return false
+	}
 
+	out := t.Transform(body, v)
+	if out == nil {
+		return false
+	}
+
+	res.Body = ioutil.NopCloser(bytes.NewBuffer(out))
+	res.Header.Del("Content-Length")
+
+	return true
 }
 
-func (t *Transformer) Transform(input []byte, v interface{}) []byte {
-	err := json.Unmarshal([]byte(input), v)
+func (t *Transformer) Transform(in []byte, v interface{}) []byte {
+	err := json.Unmarshal([]byte(in), v)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
 	}
 
-	output, err := json.Marshal(v)
+	out, err := json.Marshal(v)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
 	}
 
-	return output
+	return out
 }

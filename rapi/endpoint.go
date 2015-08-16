@@ -16,6 +16,7 @@ type Endpoint struct {
 	reqIntStruct interface{}
 	resExtStruct interface{}
 	resIntStruct interface{}
+	transformer  *Transformer
 }
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
@@ -29,6 +30,7 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 		reqIntStruct: nil,
 		resExtStruct: nil,
 		resIntStruct: nil,
+		transformer:  a.transformer,
 	}
 
 	a.router.
@@ -45,9 +47,17 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.Scheme = "http"
 	r.URL.Path = "/api" + ep.intPath
 
+	if ep.reqExtStruct != nil {
+		ep.transformer.TransformRequest(r, ep.reqExtStruct)
+	}
+
 	res, resErr := tr.RoundTrip(r)
 	if resErr == nil {
 		defer res.Body.Close()
+	}
+
+	if ep.resExtStruct != nil {
+		ep.transformer.TransformResponse(res, ep.resExtStruct)
 	}
 
 	w.WriteHeader(res.StatusCode)
