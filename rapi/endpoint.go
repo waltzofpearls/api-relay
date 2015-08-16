@@ -56,9 +56,6 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if ioErr != nil {
 		log.Printf("Error writting response: %s", ioErr)
 	}
-
-	// fmt.Fprint(w, "Protected!!!!\n"+r.URL.Query().Get("querystring1"))
-	// w.Write([]byte("Gorilla!\n"))
 }
 
 func (ep *Endpoint) InternalPath(path string) *Endpoint {
