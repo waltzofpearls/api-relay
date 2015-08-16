@@ -3,6 +3,7 @@
 build:relay-api
 
 test:
+	go vet ./...
 	go test ./...
 
 clean:
