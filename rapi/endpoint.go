@@ -13,7 +13,7 @@ type Endpoint struct {
 	reqIntStruct interface{}
 	resExtStruct interface{}
 	resIntStruct interface{}
-	transformer  *Transformer
+	transformer  Transformable
 }
 
 func NewEndpoint(a *Api, method, path string) *Endpoint {
@@ -27,9 +27,7 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 		transformer:  a.transformer,
 	}
 
-	a.router.
-		Handle(ep.config.Listener.Prefix+path, ep).
-		Methods(method)
+	a.Route(method, ep.config.Listener.Prefix+path, ep)
 
 	return ep
 }
