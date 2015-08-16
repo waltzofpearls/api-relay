@@ -1,25 +1,29 @@
 package rapi
 
+import (
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
+
 type TransformCb func() (err error)
 
 type Api struct {
-	prefix string
-	proxy  *Proxy
-	config *Config
+	config *ConfigItem
+	router *mux.Router
 }
 
-func New(prefix string, config *Config) *Api {
+func New(config *ConfigItem) *Api {
 	a := new(Api)
 	a.config = config
-	a.prefix = prefix
-	a.proxy = NewProxy(a.config)
+	a.router = mux.NewRouter()
 	return a
 }
 
 func (a *Api) Run() {
-	a.proxy.Serve()
+	http.ListenAndServe(a.config.ListenAddr, a.router)
 }
 
 func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
-	return NewEndpoint(a, a.prefix, method, endpoint)
+	return NewEndpoint(a, method, endpoint)
 }

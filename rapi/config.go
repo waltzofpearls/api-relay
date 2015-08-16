@@ -7,13 +7,15 @@ import (
 )
 
 type ConfigItem struct {
-	ListenAddr string `json:"listenAddr"`
-	Downstream string `json:"downstream"`
+	ListenAddr    string `json: "listenAddr"`
+	Downstream    string `json: "downstream"`
+	ExtPathPrefix string `json: "extPathPrefix"`
+	IntPathPrefix string `json: "intPathPrefix"`
 }
 
 type Config struct {
 	path string
-	item *ConfigItem
+	Item *ConfigItem
 }
 
 func NewConfig() *Config {
@@ -31,9 +33,9 @@ func (c *Config) Parse() {
 	file, _ := os.Open(c.path)
 	decoder := json.NewDecoder(file)
 
-	c.item = new(ConfigItem)
+	c.Item = new(ConfigItem)
 
-	err := decoder.Decode(c.item)
+	err := decoder.Decode(c.Item)
 	if err != nil {
 		log.Fatalf("Error parsing JSON config file: %s", err)
 	}
