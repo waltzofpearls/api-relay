@@ -9,8 +9,8 @@ import (
 )
 
 type Transformable interface {
-	TransformRequest(*http.Request, interface{}) bool
-	TransformResponse(*http.Response, interface{}) bool
+	TransformRequest(*http.Request, interface{}, interface{}) bool
+	TransformResponse(*http.Response, interface{}, interface{}) bool
 }
 
 type Transformer struct {
@@ -20,44 +20,44 @@ func NewTransformer() *Transformer {
 	return &Transformer{}
 }
 
-func (t *Transformer) TransformRequest(req *http.Request, v interface{}) bool {
-	body, err := ioutil.ReadAll(req.Body)
+func (t *Transformer) TransformRequest(r *http.Request, ex, in interface{}) bool {
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Error reading request body: %s", err)
 		return false
 	}
 
-	out := t.Transform(body, v)
+	out := t.Transform(body, ex)
 	if out == nil {
 		return false
 	}
 
-	req.Body = ioutil.NopCloser(bytes.NewBuffer(out))
-	req.Header.Del("Content-Length")
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(out))
+	r.Header.Del("Content-Length")
 
 	return true
 }
 
-func (t *Transformer) TransformResponse(res *http.Response, v interface{}) bool {
-	body, err := ioutil.ReadAll(res.Body)
+func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bool {
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Error reading response body: %s", err)
 		return false
 	}
 
-	out := t.Transform(body, v)
+	out := t.Transform(body, in)
 	if out == nil {
 		return false
 	}
 
-	res.Body = ioutil.NopCloser(bytes.NewBuffer(out))
-	res.Header.Del("Content-Length")
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(out))
+	r.Header.Del("Content-Length")
 
 	return true
 }
 
 func (t *Transformer) Transform(in []byte, v interface{}) []byte {
-	err := json.Unmarshal([]byte(in), v)
+	err := json.Unmarshal(in, v)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil

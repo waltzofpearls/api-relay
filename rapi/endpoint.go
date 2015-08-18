@@ -38,8 +38,8 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.Scheme = "http"
 	r.URL.Path = ep.config.Backend.Prefix + ep.path
 
-	if ep.reqExtStruct != nil {
-		ep.transformer.TransformRequest(r, ep.reqExtStruct)
+	if ep.reqIntStruct != nil && ep.reqExtStruct != nil {
+		ep.transformer.TransformRequest(r, ep.reqExtStruct, ep.reqIntStruct)
 	}
 
 	res, resErr := tr.RoundTrip(r)
@@ -49,8 +49,8 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		defer res.Body.Close()
 	}
 
-	if ep.resExtStruct != nil {
-		ep.transformer.TransformResponse(res, ep.resExtStruct)
+	if ep.resIntStruct != nil && ep.resExtStruct != nil {
+		ep.transformer.TransformResponse(res, ep.resIntStruct, ep.resExtStruct)
 	}
 
 	w.WriteHeader(res.StatusCode)
@@ -66,15 +66,15 @@ func (ep *Endpoint) InternalPath(path string) *Endpoint {
 	return ep
 }
 
-func (ep *Endpoint) TransformRequest(external, internal interface{}) *Endpoint {
-	ep.reqExtStruct = external
-	ep.reqIntStruct = internal
+func (ep *Endpoint) TransformRequest(ex, in interface{}) *Endpoint {
+	ep.reqExtStruct = ex
+	ep.reqIntStruct = in
 	return ep
 }
 
-func (ep *Endpoint) TransformResponse(external, internal interface{}) *Endpoint {
-	ep.resExtStruct = external
-	ep.resIntStruct = internal
+func (ep *Endpoint) TransformResponse(in, ex interface{}) *Endpoint {
+	ep.resIntStruct = in
+	ep.resExtStruct = ex
 	return ep
 }
 
