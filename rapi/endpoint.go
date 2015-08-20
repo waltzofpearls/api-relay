@@ -1,10 +1,14 @@
 package rapi
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"text/template"
+
+	"github.com/gorilla/mux"
 )
 
 type TransformCb func() (err error)
@@ -34,6 +38,8 @@ func NewEndpoint(a *Api, method, path string) *Endpoint {
 func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tr := http.DefaultTransport
 
+	ep.CopyUrlVars(r)
+
 	r.URL.Host = ep.config.Backend.Address
 	r.URL.Scheme = "http"
 	r.URL.Path = ep.config.Backend.Prefix + ep.path
@@ -59,6 +65,23 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if ioErr != nil {
 		log.Printf("Error writting response: %s", ioErr)
 	}
+}
+
+func (ep *Endpoint) CopyUrlVars(r *http.Request) {
+	var path bytes.Buffer
+
+	vars := mux.Vars(r)
+	if len(vars) == 0 {
+		return
+	}
+
+	t, err := template.New("path").Parse(ep.path)
+	if err != nil {
+		return
+	}
+
+	t.Execute(&path, vars)
+	ep.path = path.String()
 }
 
 func (ep *Endpoint) InternalPath(path string) *Endpoint {
