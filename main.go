@@ -22,6 +22,9 @@ func main() {
 	api.NewEndpoint("GET", "/users")
 	api.NewEndpoint("GET", "/invoices").
 		TransformResponse(&InvoiceInternal{}, &InvoiceExternal{})
+	api.NewEndpoint("GET", "/invoices/{Id:[A-Z0-9]+}").
+		InternalPath("/invoices/{{.Id}}").
+		TransformResponse(&InvoiceInternal{}, &InvoiceExternal{})
 
 	api.Run()
 }
