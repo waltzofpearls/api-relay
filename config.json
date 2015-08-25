@@ -1,10 +1,15 @@
 {
   "listener": {
     "address":"localhost:9001",
-    "prefix":"/v1"
+    "prefix":"/v1",
+    "useTls":false,
+    "certFile":"",
+    "keyFile":""
   },
   "backend": {
     "address":"localhost:8094",
-    "prefix":"/api"
+    "prefix":"/api",
+    "useTls":true,
+    "insecureSkipVerify":true
   }
 }
