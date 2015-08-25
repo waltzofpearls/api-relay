@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -45,4 +46,25 @@ func TestEndpointUnchanged(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.Code)
 	assert.Equal(t, fixture, requestContent, "request body is unchanged")
+}
+
+func TestCopyUrlVars(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer ts.Close()
+
+	conf := rapi.NewConfig()
+	conf.Backend.Address = strings.TrimPrefix(ts.URL, "http://")
+
+	api := rapi.New(conf)
+	ep := rapi.NewEndpoint(api, "GET", "/{Foo}/{Bar}/{Baz}").
+		InternalPath("/{{.Baz}}/{{.Bar}}/{{.Foo}}")
+
+	req, _ := http.NewRequest("GET", "/foo/bar/baz", nil)
+	res := httptest.NewRecorder()
+
+	ep.CopyUrlVars(req)
+	api.Router().ServeHTTP(res, req)
+
+	s := reflect.ValueOf(ep).Elem()
+	assert.Equal(t, "/baz/bar/foo", s.FieldByName("path").String())
 }

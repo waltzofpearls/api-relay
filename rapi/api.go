@@ -29,6 +29,10 @@ func (a *Api) Route(method, path string, h http.Handler) {
 		Methods(method)
 }
 
+func (a *Api) Router() *mux.Router {
+	return a.router
+}
+
 func (a *Api) NewEndpoint(method, endpoint string) *Endpoint {
 	return NewEndpoint(a, method, endpoint)
 }
