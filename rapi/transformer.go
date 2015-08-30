@@ -14,7 +14,7 @@ type Transformable interface {
 }
 
 type Customizable interface {
-	Transform(v interface{}) []byte
+	Transform(v interface{}) *interface{}
 }
 
 type Transformer struct {
@@ -31,7 +31,7 @@ func (t *Transformer) TransformRequest(r *http.Request, ex, in interface{}) bool
 		return false
 	}
 
-	out := t.Transform(body, ex)
+	out := t.Transform(body, ex, in)
 	if out == nil {
 		return false
 	}
@@ -49,7 +49,7 @@ func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bo
 		return false
 	}
 
-	out := t.Transform(body, in)
+	out := t.Transform(body, in, ex)
 	if out == nil {
 		return false
 	}
@@ -60,14 +60,22 @@ func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bo
 	return true
 }
 
-func (t *Transformer) Transform(in []byte, v interface{}) []byte {
-	err := json.Unmarshal(in, v)
+func (t *Transformer) Transform(body []byte, dec, enc interface{}) []byte {
+	err := json.Unmarshal(body, &dec)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
 	}
 
-	out, err := json.Marshal(v)
+	if c, ok := dec.(Customizable); ok {
+		enc = c.Transform(&enc)
+	} else if c, ok := enc.(Customizable); ok {
+		enc = c.Transform(&dec)
+	} else {
+		enc = &dec
+	}
+
+	out, err := json.Marshal(enc)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
