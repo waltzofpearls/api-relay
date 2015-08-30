@@ -13,6 +13,10 @@ type Transformable interface {
 	TransformResponse(*http.Response, interface{}, interface{}) bool
 }
 
+type Customizable interface {
+	Transform(v interface{}) []byte
+}
+
 type Transformer struct {
 }
 
