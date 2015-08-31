@@ -14,11 +14,10 @@ type Transformable interface {
 }
 
 type Customizable interface {
-	Transform(v interface{}) *interface{}
+	Transform(v interface{}) interface{}
 }
 
-type Transformer struct {
-}
+type Transformer struct{}
 
 func NewTransformer() *Transformer {
 	return &Transformer{}
@@ -72,7 +71,7 @@ func (t *Transformer) Transform(body []byte, dec, enc interface{}) []byte {
 	} else if c, ok := enc.(Customizable); ok {
 		enc = c.Transform(&dec)
 	} else {
-		enc = &dec
+		enc = dec
 	}
 
 	out, err := json.Marshal(enc)
