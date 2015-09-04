@@ -30,18 +30,56 @@ type Same struct {
 	} `json:"three"`
 }
 
-var customEnc = `{
-
+var from = `{
+  "field_aa": "value of field aa",
+  "field_bb": [
+    {
+      "field_bb_1_1": "value of field bb 1 1"
+    }
+  ],
+  "field_cc": {
+    "field_cc_1": "value of field cc 1"
+  }
 }`
 
-type CustomEnc struct {
+var to = `{
+  "field_xx": "value of field aa",
+  "field_yy": [
+    {
+      "field_yy_1_1": "value of field b 1 1"
+    }
+  ],
+  "field_zz": {
+    "field_zz_1": "value of field c 1"
+  }
+}`
+
+type From struct {
+	FieldAA string
+	FieldBB []struct {
+		FieldBB11 string
+	}
+	FieldCC struct {
+		FieldCC1 string
+	}
 }
 
-var customDec = `{
+type To struct {
+	FieldXX string
+	FieldYY []struct {
+		FieldYY11 string
+	}
+	FieldZZ struct {
+		FieldZZ1 string
+	}
+}
 
-}`
+type CustomFrom struct {
+	From
+}
 
-type CustomDec struct {
+type CustomTo struct {
+	To
 }
 
 func TestTransformSameStruct(t *testing.T) {
@@ -56,6 +94,9 @@ func TestTransformSameStruct(t *testing.T) {
 }
 
 func TestTransformCustomDecoder(t *testing.T) {
+	tx := rapi.NewTransformer()
+	out := tx.Transform([]byte(same), Same{}, Same{})
+	require.NotNil(t, out)
 }
 
 func TestTransformCustomEncoder(t *testing.T) {

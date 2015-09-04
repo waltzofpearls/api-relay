@@ -59,22 +59,22 @@ func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bo
 	return true
 }
 
-func (t *Transformer) Transform(body []byte, dec, enc interface{}) []byte {
-	err := json.Unmarshal(body, &dec)
+func (t *Transformer) Transform(body []byte, from, to interface{}) []byte {
+	err := json.Unmarshal(body, &from)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
 	}
 
-	if c, ok := dec.(Customizable); ok {
-		enc = c.Transform(&enc)
-	} else if c, ok := enc.(Customizable); ok {
-		enc = c.Transform(&dec)
+	if c, ok := from.(Customizable); ok {
+		to = c.Transform(&to)
+	} else if c, ok := to.(Customizable); ok {
+		to = c.Transform(&from)
 	} else {
-		enc = dec
+		to = from
 	}
 
-	out, err := json.Marshal(enc)
+	out, err := json.Marshal(to)
 	if err != nil {
 		log.Printf("Error unmarshalling JSON data: %s", err)
 		return nil
