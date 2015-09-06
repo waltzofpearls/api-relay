@@ -78,8 +78,16 @@ type CustomFrom struct {
 	From
 }
 
+func (cf *CustomFrom) Transform(v interface{}) interface{} {
+	return v
+}
+
 type CustomTo struct {
 	To
+}
+
+func (ct *CustomTo) Transform(v interface{}) interface{} {
+	return v
 }
 
 func TestTransformSameStruct(t *testing.T) {
@@ -93,13 +101,22 @@ func TestTransformSameStruct(t *testing.T) {
 	assert.Equal(t, same, dst.String())
 }
 
-func TestTransformCustomDecoder(t *testing.T) {
+func TestTransformCustomFrom(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(same), Same{}, Same{})
+	out := tx.Transform([]byte(same), CustomFrom{}, To{})
 	require.NotNil(t, out)
+
+	var dst bytes.Buffer
+	json.Indent(&dst, out, "", "  ")
 }
 
-func TestTransformCustomEncoder(t *testing.T) {
+func TestTransformCustomTo(t *testing.T) {
+	tx := rapi.NewTransformer()
+	out := tx.Transform([]byte(same), From{}, CustomTo{})
+	require.NotNil(t, out)
+
+	var dst bytes.Buffer
+	json.Indent(&dst, out, "", "  ")
 }
 
 func TestTransformRequest(t *testing.T) {
