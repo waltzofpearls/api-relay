@@ -46,32 +46,32 @@ var to = `{
   "field_xx": "value of field aa",
   "field_yy": [
     {
-      "field_yy_1_1": "value of field b 1 1"
+      "field_yy_1_1": "value of field bb 1 1"
     }
   ],
   "field_zz": {
-    "field_zz_1": "value of field c 1"
+    "field_zz_1": "value of field cc 1"
   }
 }`
 
 type From struct {
-	FieldAA string
+	FieldAA string `json:"field_aa"`
 	FieldBB []struct {
-		FieldBB11 string
-	}
+		FieldBB11 string `json:"field_bb_1_1"`
+	} `json:"field_bb"`
 	FieldCC struct {
-		FieldCC1 string
-	}
+		FieldCC1 string `json:"field_cc_1"`
+	} `json:"field_cc"`
 }
 
 type To struct {
-	FieldXX string
+	FieldXX string `json:"field_xx"`
 	FieldYY []struct {
-		FieldYY11 string
-	}
+		FieldYY11 string `json:"field_yy_1_1"`
+	} `json:"field_yy"`
 	FieldZZ struct {
-		FieldZZ1 string
-	}
+		FieldZZ1 string `json:"field_zz_1"`
+	} `json:"field_zz"`
 }
 
 type CustomFrom struct {
@@ -79,8 +79,19 @@ type CustomFrom struct {
 }
 
 func (cf *CustomFrom) Transform(v interface{}) interface{} {
-	v.From.FieldXX = cf.FieldAA
-	return v
+	c, _ := v.(To)
+	c.FieldXX = cf.FieldAA
+	c.FieldYY = []struct {
+		FieldYY11 string `json:"field_yy_1_1"`
+	}{
+		{FieldYY11: cf.FieldBB[0].FieldBB11},
+	}
+	c.FieldZZ = struct {
+		FieldZZ1 string `json:"field_zz_1"`
+	}{
+		FieldZZ1: cf.FieldCC.FieldCC1,
+	}
+	return c
 }
 
 type CustomTo struct {
@@ -104,7 +115,7 @@ func TestTransformSameStruct(t *testing.T) {
 
 func TestTransformCustomFrom(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(from), CustomFrom{}, To{})
+	out := tx.Transform([]byte(from), &CustomFrom{}, &To{})
 	require.NotNil(t, out)
 
 	var dst bytes.Buffer

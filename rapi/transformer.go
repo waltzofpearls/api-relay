@@ -14,7 +14,7 @@ type Transformable interface {
 }
 
 type Customizable interface {
-	Transform(v interface{}) interface{}
+	Transform(interface{}) interface{}
 }
 
 type Transformer struct{}
