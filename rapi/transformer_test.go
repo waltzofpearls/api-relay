@@ -79,6 +79,7 @@ type CustomFrom struct {
 }
 
 func (cf *CustomFrom) Transform(v interface{}) interface{} {
+	v.From.FieldXX = cf.FieldAA
 	return v
 }
 
@@ -103,20 +104,24 @@ func TestTransformSameStruct(t *testing.T) {
 
 func TestTransformCustomFrom(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(same), CustomFrom{}, To{})
+	out := tx.Transform([]byte(from), CustomFrom{}, To{})
 	require.NotNil(t, out)
 
 	var dst bytes.Buffer
 	json.Indent(&dst, out, "", "  ")
+
+	assert.Equal(t, to, dst.String())
 }
 
 func TestTransformCustomTo(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(same), From{}, CustomTo{})
+	out := tx.Transform([]byte(from), From{}, CustomTo{})
 	require.NotNil(t, out)
 
 	var dst bytes.Buffer
 	json.Indent(&dst, out, "", "  ")
+
+	assert.Equal(t, to, dst.String())
 }
 
 func TestTransformRequest(t *testing.T) {
