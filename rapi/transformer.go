@@ -30,7 +30,7 @@ func (t *Transformer) TransformRequest(r *http.Request, ex, in interface{}) bool
 		return false
 	}
 
-	out := t.Transform(body, ex, in)
+	out := t.Transform(body, &ex, &in)
 	if out == nil {
 		return false
 	}
@@ -48,7 +48,7 @@ func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bo
 		return false
 	}
 
-	out := t.Transform(body, in, ex)
+	out := t.Transform(body, &in, &ex)
 	if out == nil {
 		return false
 	}
@@ -67,9 +67,9 @@ func (t *Transformer) Transform(body []byte, from, to interface{}) []byte {
 	}
 
 	if c, ok := from.(Customizable); ok {
-		to = c.Transform(&to)
+		to = c.Transform(to)
 	} else if c, ok := to.(Customizable); ok {
-		to = c.Transform(&from)
+		to = c.Transform(from)
 	} else {
 		to = from
 	}

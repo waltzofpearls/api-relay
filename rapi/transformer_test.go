@@ -12,18 +12,18 @@ import (
 
 var same = `{
   "one": "value of one",
+  "two": "value of two",
   "three": [
     {
-      "five": "value of five",
-      "four": "value of four"
+      "four": "value of four",
+      "five": "value of five"
     }
-  ],
-  "two": "value of two"
+  ]
 }`
 
 type Same struct {
 	One   string `json:"one"`
-	Two   int    `json:"two"`
+	Two   string `json:"two"`
 	Three []struct {
 		Four string `json:"four"`
 		Five string `json:"five"`
@@ -79,7 +79,7 @@ type CustomFrom struct {
 }
 
 func (cf *CustomFrom) Transform(v interface{}) interface{} {
-	c, _ := v.(To)
+	c, _ := v.(*To)
 	c.FieldXX = cf.FieldAA
 	c.FieldYY = []struct {
 		FieldYY11 string `json:"field_yy_1_1"`
@@ -99,12 +99,24 @@ type CustomTo struct {
 }
 
 func (ct *CustomTo) Transform(v interface{}) interface{} {
-	return v
+	c, _ := v.(*From)
+	ct.FieldXX = c.FieldAA
+	ct.FieldYY = []struct {
+		FieldYY11 string `json:"field_yy_1_1"`
+	}{
+		{FieldYY11: c.FieldBB[0].FieldBB11},
+	}
+	ct.FieldZZ = struct {
+		FieldZZ1 string `json:"field_zz_1"`
+	}{
+		FieldZZ1: c.FieldCC.FieldCC1,
+	}
+	return ct
 }
 
 func TestTransformSameStruct(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(same), Same{}, Same{})
+	out := tx.Transform([]byte(same), &Same{}, &Same{})
 	require.NotNil(t, out)
 
 	var dst bytes.Buffer
@@ -126,7 +138,7 @@ func TestTransformCustomFrom(t *testing.T) {
 
 func TestTransformCustomTo(t *testing.T) {
 	tx := rapi.NewTransformer()
-	out := tx.Transform([]byte(from), From{}, CustomTo{})
+	out := tx.Transform([]byte(from), &From{}, &CustomTo{})
 	require.NotNil(t, out)
 
 	var dst bytes.Buffer
