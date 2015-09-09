@@ -3,6 +3,9 @@ package rapi_test
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -116,6 +119,7 @@ func (ct *CustomTo) Transform(v interface{}) interface{} {
 
 func TestTransformSameStruct(t *testing.T) {
 	tx := rapi.NewTransformer()
+
 	out := tx.Transform([]byte(same), &Same{}, &Same{})
 	require.NotNil(t, out)
 
@@ -127,6 +131,7 @@ func TestTransformSameStruct(t *testing.T) {
 
 func TestTransformCustomFrom(t *testing.T) {
 	tx := rapi.NewTransformer()
+
 	out := tx.Transform([]byte(from), &CustomFrom{}, &To{})
 	require.NotNil(t, out)
 
@@ -138,6 +143,7 @@ func TestTransformCustomFrom(t *testing.T) {
 
 func TestTransformCustomTo(t *testing.T) {
 	tx := rapi.NewTransformer()
+
 	out := tx.Transform([]byte(from), &From{}, &CustomTo{})
 	require.NotNil(t, out)
 
@@ -148,6 +154,25 @@ func TestTransformCustomTo(t *testing.T) {
 }
 
 func TestTransformRequest(t *testing.T) {
+	tx := rapi.NewTransformer()
+
+	var fixture = `{"One":"this is the one", "Two":"this is the second"}`
+	req, err := http.NewRequest("GET", "/test", strings.NewReader(fixture))
+	require.Nil(t, err)
+	require.NotNil(t, req)
+
+	var structure struct {
+		One string
+		Two string
+	}
+	ok := tx.TransformRequest(req, structure, structure)
+	require.True(t, ok)
+
+	body, err := ioutil.ReadAll(req.Body)
+	require.Nil(t, err)
+	require.NotEmpty(t, body)
+
+	assert.Equal(t, fixture, string(fixture))
 }
 
 func TestTransformResponse(t *testing.T) {
