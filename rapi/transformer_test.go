@@ -176,4 +176,26 @@ func TestTransformRequest(t *testing.T) {
 }
 
 func TestTransformResponse(t *testing.T) {
+	tx := rapi.NewTransformer()
+
+	var fixture = `{"One":"this is the one", "Two":"this is the second"}`
+	res := &http.Response{
+		Header:     make(http.Header),
+		StatusCode: http.StatusOK,
+	}
+	res.Body = ioutil.NopCloser(strings.NewReader(fixture))
+	require.NotNil(t, res)
+
+	var structure struct {
+		One string
+		Two string
+	}
+	ok := tx.TransformResponse(res, structure, structure)
+	require.True(t, ok)
+
+	body, err := ioutil.ReadAll(res.Body)
+	require.Nil(t, err)
+	require.NotEmpty(t, body)
+
+	assert.Equal(t, fixture, string(fixture))
 }
