@@ -30,7 +30,7 @@ func (t *Transformer) TransformRequest(r *http.Request, ex, in interface{}) bool
 		return false
 	}
 
-	out := t.Transform(body, &ex, &in)
+	out := t.Transform(body, ex, in)
 	if out == nil {
 		return false
 	}
@@ -48,7 +48,7 @@ func (t *Transformer) TransformResponse(r *http.Response, in, ex interface{}) bo
 		return false
 	}
 
-	out := t.Transform(body, &in, &ex)
+	out := t.Transform(body, in, ex)
 	if out == nil {
 		return false
 	}

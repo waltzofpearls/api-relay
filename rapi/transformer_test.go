@@ -162,17 +162,18 @@ func TestTransformRequest(t *testing.T) {
 	require.NotNil(t, req)
 
 	var structure struct {
-		One string
-		Two string
+		One   string
+		Three string
 	}
-	ok := tx.TransformRequest(req, structure, structure)
+	var expected = `{"One":"this is the one","Three":""}`
+	ok := tx.TransformRequest(req, &structure, &structure)
 	require.True(t, ok)
 
 	body, err := ioutil.ReadAll(req.Body)
 	require.Nil(t, err)
 	require.NotEmpty(t, body)
 
-	assert.Equal(t, fixture, string(fixture))
+	assert.Equal(t, expected, string(body))
 }
 
 func TestTransformResponse(t *testing.T) {
@@ -187,15 +188,16 @@ func TestTransformResponse(t *testing.T) {
 	require.NotNil(t, res)
 
 	var structure struct {
-		One string
-		Two string
+		One   string
+		Three string
 	}
-	ok := tx.TransformResponse(res, structure, structure)
+	var expected = `{"One":"this is the one","Three":""}`
+	ok := tx.TransformResponse(res, &structure, &structure)
 	require.True(t, ok)
 
 	body, err := ioutil.ReadAll(res.Body)
 	require.Nil(t, err)
 	require.NotEmpty(t, body)
 
-	assert.Equal(t, fixture, string(fixture))
+	assert.Equal(t, expected, string(body))
 }

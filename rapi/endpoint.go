@@ -45,7 +45,7 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = ep.config.Backend.Prefix + ep.path
 
 	if ep.reqIntStruct != nil && ep.reqExtStruct != nil {
-		ep.transformer.TransformRequest(r, ep.reqExtStruct, ep.reqIntStruct)
+		ep.transformer.TransformRequest(r, &ep.reqExtStruct, &ep.reqIntStruct)
 	}
 
 	res, resErr := tr.RoundTrip(r)
@@ -56,7 +56,7 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ep.resIntStruct != nil && ep.resExtStruct != nil {
-		ep.transformer.TransformResponse(res, ep.resIntStruct, ep.resExtStruct)
+		ep.transformer.TransformResponse(res, &ep.resIntStruct, &ep.resExtStruct)
 	}
 
 	w.WriteHeader(res.StatusCode)
