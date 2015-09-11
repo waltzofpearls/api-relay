@@ -3,16 +3,16 @@
     "address": "localhost:9001",
     "prefix": "/v1",
     "tls": {
-      "enable": false,
-      "certFile": "",
-      "keyFile": ""
+      "enable": true,
+      "certFile": "relay-api.crt",
+      "keyFile": "relay-api.key"
     }
   },
   "backend": {
     "address": "localhost:8094",
     "prefix": "/api",
     "tls": {
-      "enable":true,
+      "enable":false,
       "insecureSkipVerify":true
     }
   }

@@ -21,7 +21,19 @@ func New(config *Config) *Api {
 }
 
 func (a *Api) Run() {
-	http.ListenAndServe(a.config.Listener.Address, a.router)
+	if a.config.Listener.Tls.Enable {
+		http.ListenAndServeTLS(
+			a.config.Listener.Address,
+			a.config.Listener.Tls.CertFile,
+			a.config.Listener.Tls.KeyFile,
+			a.router,
+		)
+	} else {
+		http.ListenAndServe(
+			a.config.Listener.Address,
+			a.router,
+		)
+	}
 }
 
 func (a *Api) Route(method, path string, h http.Handler) {
