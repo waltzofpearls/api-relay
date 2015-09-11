@@ -156,7 +156,7 @@ func TestTransformCustomTo(t *testing.T) {
 func TestTransformRequest(t *testing.T) {
 	tx := rapi.NewTransformer()
 
-	var fixture = `{"One":"this is the one", "Two":"this is the second"}`
+	var fixture = `{"One":"this is the one","Two":"this is the second"}`
 	req, err := http.NewRequest("GET", "/test", strings.NewReader(fixture))
 	require.Nil(t, err)
 	require.NotNil(t, req)
@@ -179,7 +179,7 @@ func TestTransformRequest(t *testing.T) {
 func TestTransformResponse(t *testing.T) {
 	tx := rapi.NewTransformer()
 
-	var fixture = `{"One":"this is the one", "Two":"this is the second"}`
+	var fixture = `{"One":"this is the one","Two":"this is the second"}`
 	res := &http.Response{
 		Header:     make(http.Header),
 		StatusCode: http.StatusOK,

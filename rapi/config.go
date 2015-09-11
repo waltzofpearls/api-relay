@@ -10,10 +10,19 @@ type Config struct {
 	Listener struct {
 		Address string `json:"address"`
 		Prefix  string `json:"prefix"`
+		Tls     struct {
+			Enable   bool   `json:"enable"`
+			CertFile string `json:"certFile"`
+			KeyFile  string `json:"keyFile"`
+		} `json:"tls"`
 	} `json:"listener"`
 	Backend struct {
 		Address string `json:"address"`
 		Prefix  string `json:"prefix"`
+		Tls     struct {
+			Enable             bool `json:"enable"`
+			InsecureSkipVerify bool `json:"insecureSkipVerify"`
+		} `json:"tls"`
 	} `json:"backend"`
 }
 

@@ -1,15 +1,19 @@
 {
   "listener": {
-    "address":"localhost:9001",
-    "prefix":"/v1",
-    "useTls":false,
-    "certFile":"",
-    "keyFile":""
+    "address": "localhost:9001",
+    "prefix": "/v1",
+    "tls": {
+      "enable": false,
+      "certFile": "",
+      "keyFile": ""
+    }
   },
   "backend": {
-    "address":"localhost:8094",
-    "prefix":"/api",
-    "useTls":true,
-    "insecureSkipVerify":true
+    "address": "localhost:8094",
+    "prefix": "/api",
+    "tls": {
+      "enable":true,
+      "insecureSkipVerify":true
+    }
   }
 }
