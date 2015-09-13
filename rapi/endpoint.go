@@ -2,6 +2,7 @@ package rapi
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -41,8 +42,16 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ep.CopyUrlVars(r)
 
 	r.URL.Host = ep.config.Backend.Address
-	r.URL.Scheme = "http"
 	r.URL.Path = ep.config.Backend.Prefix + ep.path
+
+	if ep.config.Backend.Tls.Enable {
+		r.URL.Scheme = "https"
+		if ep.config.Backend.Tls.InsecureSkipVerify {
+			tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		}
+	} else {
+		r.URL.Scheme = "http"
+	}
 
 	if ep.reqIntStruct != nil && ep.reqExtStruct != nil {
 		ep.transformer.TransformRequest(r, &ep.reqExtStruct, &ep.reqIntStruct)
