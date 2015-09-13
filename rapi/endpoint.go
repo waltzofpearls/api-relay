@@ -46,8 +46,10 @@ func (ep *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if ep.config.Backend.Tls.Enable {
 		r.URL.Scheme = "https"
-		if ep.config.Backend.Tls.InsecureSkipVerify {
-			tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		if tr, ok := tr.(*http.Transport); ok {
+			if ep.config.Backend.Tls.InsecureSkipVerify {
+				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+			}
 		}
 	} else {
 		r.URL.Scheme = "http"
