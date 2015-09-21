@@ -1,6 +1,9 @@
 .PHONY: test clean build
 
-build:relay-api
+build: relay-api
+
+run: build
+	./relay-api
 
 test:
 	go vet ./...
