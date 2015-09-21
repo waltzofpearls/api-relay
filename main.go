@@ -19,6 +19,7 @@ func main() {
 	config := rapi.NewConfigFile(configPath)
 	api := rapi.New(config)
 
+	api.NewEndpoint("POST", "/auth/login")
 	api.NewEndpoint("GET", "/users")
 	api.NewEndpoint("GET", "/invoices").
 		TransformResponse(&InvoiceInternal{}, &InvoiceExternal{})
