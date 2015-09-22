@@ -28,3 +28,4 @@ relay-api
 *.csr
 *.key
 *.pem
+tags
