@@ -23,9 +23,14 @@ _testmain.go
 *.test
 *.prof
 
-relay-api
+!.*.yml
 *.crt
 *.csr
 *.key
 *.pem
+*.swp
+*.yml
+.DS_Store
+c.out
+relay-api
 tags
