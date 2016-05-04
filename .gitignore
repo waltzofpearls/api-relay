@@ -32,5 +32,5 @@ _testmain.go
 *.yml
 .DS_Store
 c.out
-relay-api
+api-relay
 tags
