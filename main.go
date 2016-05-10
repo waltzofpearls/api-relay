@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/waltzofpearls/relay-api/rapi"
+	"github.com/waltzofpearls/api-relay/rapi"
 )
 
 func main() {

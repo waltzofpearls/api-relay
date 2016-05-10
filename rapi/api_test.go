@@ -3,7 +3,7 @@ package rapi_test
 import (
 	"testing"
 
-	"github.com/waltzofpearls/relay-api/rapi"
+	"github.com/waltzofpearls/api-relay/rapi"
 )
 
 func TestCreateApi(t *testing.T) {

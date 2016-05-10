@@ -1,6 +1,6 @@
 package main
 
-import "github.com/waltzofpearls/relay-api/rapi"
+import "github.com/waltzofpearls/api-relay/rapi"
 
 type InvoiceExternal struct {
 	Total   int `json:"total"`

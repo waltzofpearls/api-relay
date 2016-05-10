@@ -1,6 +1,6 @@
 .PHONY: test clean build
 
-build: relay-api
+build: api-relay
 
 test:
 	go vet ./...
@@ -17,5 +17,5 @@ cover:
 	go test -coverprofile c.out ./...
 	go tool cover -html=c.out
 
-relay-api: *.go rapi/*.go
-	go build -o relay-api ./
+api-relay: *.go rapi/*.go
+	go build -o api-relay ./
